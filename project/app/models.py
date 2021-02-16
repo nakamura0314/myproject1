@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
-class cost(models.Model):
+class Cost(models.Model):
     """その日の費用、naritoではスケジュールとして扱われている"""
     summary = models.CharField('概要', max_length=30)
     money = models.IntegerField(
