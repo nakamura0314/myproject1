@@ -5,16 +5,16 @@ from collections import deque
 
 class BaseCalendarMixin:
     """カレンダー関連のMixinの、基底クラス"""
-    first_weekday = 0
+    first_weekday = 6
     # これは日曜日からかくことを想定している
-    week_names = ['日', '月', '火', '水', '木', '金', '土']
+    week_names = ['月', '火', '水', '木', '金', '土', '日']
 
     def setup_calendar(self):
         """内部カレンダーの設定処理
 
         calendar.Calendarクラスの機能を利用するため、インスタンス化する
         Calendarクラスのmonthdatescalendarメソッドを利用しているが、デフォルトが日曜日からで、
-        火曜日から表示したい(first_weekday=2)、といったケースに対応するためのセットアップ処理
+        火曜日から表示したい(first_weekday=1)、といったケースに対応するためのセットアップ処理
 
         """
         self._calendar = calendar.Calendar(self.first_weekday)
