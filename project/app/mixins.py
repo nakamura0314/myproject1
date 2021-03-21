@@ -1,6 +1,7 @@
 import calendar
 import datetime
 from collections import deque
+import itertools
 
 
 class BaseCalendarMixin:
@@ -71,3 +72,38 @@ class MonthCalendarMixin(BaseCalendarMixin):
             'week_names': self.get_week_names(),
         }
         return calendar_data
+
+
+class MonthWithScheduleMixin(MonthCalendarMixin):
+    "スケジュール付きの、月間カレンダーを提供するMixin"
+
+    def get_month_schedules(self, start, end, days):
+        lookup = {
+            # 例えば、'date__range:(1日,31日)'を動的に作る
+            '{}__range'.format(self.date_field): (start, end)
+        }
+        # 例えば、Cost.objects.filter(date__range=(1日,31日))になる
+        _queryset = self.model.objects.filter(**lookup)
+
+        # {1日のdatetime:1日の出費全て,2日のdatetime:2日の出費全て...}のような辞書
+        _day_schedules = {day: [] for week in days for day in week}
+        for schedule in _queryset:
+            schedule_date = getattr(schedule, self.date_fielde)
+            _day_schedules[schedule_date].append(schedule)
+
+        # day_schedules辞書を、週毎に分割する。[{1日:1日の出費...},{8日:8日の出費...},...]
+        # 7個ずつ取り出して分割する
+        size = len(_day_schedules)
+        return [{key: _day_schedules[key] for key in itertools.islice(_day_schedules, i, i+7)} for i in range(0, size, 7)]
+
+    def get_month_calendar(self):
+        calendar_context = super().get_month_calendar()
+        month_days = calendar_context['month_days']
+        month_first = month_days[0][0]
+        month_last = month_days[-1][-1]
+        calendar_context['month_day_schedules'] = self.get_month_schedules(
+            month_first,
+            month_last,
+            month_days
+        )
+        return calendar_context
