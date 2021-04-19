@@ -8,9 +8,9 @@ class BS4CostForm(forms.ModelForm):
     class Meta:
         model = Cost
         # Costで表示するフィールド、'__all__'とすると全て
-        fielde = ('summary', 'money', 'description')
+        fields = ('summary', 'money', 'description')
         # widget = {‘事前に設定をしたクラスのfield’:forms.TextInput等(attrs={‘class’: ‘cssのclass名’})}
-        wedget = {
+        widgets = {
             'summary': forms.TextInput(attrs={
                 'class': 'form-control',
             }),

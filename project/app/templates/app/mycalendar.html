@@ -1,0 +1,36 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-7">
+        {% include 'app/month_with_schedule_2.html' %}
+    </div>
+    <div class="col-md-5">
+        <!--
+            action属性はどこにデータを送信するのかを定義する
+            値は相対、絶対URL出なければならない
+            もし送信先が定義されていないなら、
+            フォームが表示されているページ自身に対してデータ送信を行う
+
+            method属性はデータの転送方法のこと
+            getはURLに入力内容を合わせて送信されるので、
+            断片的な情報を伝達するには適している
+            postはURL表示欄には表示せずに送信されるので、
+            機密性のある長文には適してる
+        -->
+        <form action="" method="POST">
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <div class="form-group row">
+                <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label">{{ field.label_tag }}</label>
+                <div class="col-sm-8">
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+            </div>
+            {% endfor %}
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-block">送信</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

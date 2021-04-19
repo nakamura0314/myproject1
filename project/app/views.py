@@ -30,7 +30,7 @@ class MonthWithScheduleCalendar(mixins.MonthWithScheduleMixin, generic.TemplateV
         return context
 
 
-class MyCalendar(mixins.MonthCalendarMixin, generic.CreateView):
+class MyCalendar(mixins.MonthWithScheduleMixin, generic.CreateView):
     """月間カレンダー、スケジュール登録画面"""
     template_name = 'app/mycalendar.html'
     model = Cost
@@ -42,3 +42,17 @@ class MyCalendar(mixins.MonthCalendarMixin, generic.CreateView):
         month_calendar_context = self.get_month_calendar()
         context.update(month_calendar_context)
         return context
+
+    def form_valid(self, form):
+        month = self.kwargs.get('month')
+        year = self.kwargs.get('year')
+        day = self.kwargs.get('day')
+        if month and year and day:
+            date = datetime.date(
+                year=int(year), month=int(month), day=int(day))
+        else:
+            date = datetime.date.today()
+        cost = form.save(commit=False)
+        cost.date = date
+        cost.save()
+        return redirect('app:mycalendar', year=date.year, month=date.month, day=date.day)

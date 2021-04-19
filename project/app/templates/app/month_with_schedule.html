@@ -30,22 +30,23 @@
             {% if now == day %}
             <td class="table-success">
                 {% else %}
-            </td>
-            {% endif %}
-
-            <div>
-                {% if month_current.month != day.month %}
-                <!-- 先月分の日付表示 -->
-                {{ day | date:"m/d" }}
-                {% else %}
-                <!-- 今月分の日付表示 -->
-                {{ day.day }}
+            <td>
                 {% endif %}
 
-                {% for schedule in schedules %}
-                <p>{{ schedule.summary }}</p>
-                {% endfor %}
-            </div>
+                <div>
+                    {% if month_current.month != day.month %}
+                    <!-- 先月分の日付表示 -->
+                    {{ day | date:"m/d" }}
+                    {% else %}
+                    <!-- 今月分の日付表示 -->
+                    {{ day.day }}
+                    {% endif %}
+
+                    {% for schedule in schedules %}
+                    <p>{{ cost.summary }}</p>
+                    {% endfor %}
+                </div>
+            </td>
             {% endfor %}
         </tr>
         {% endfor %}
