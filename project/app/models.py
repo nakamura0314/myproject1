@@ -1,7 +1,6 @@
 import datetime
 from django.utils import timezone
 from django.db import models
-from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -11,7 +10,7 @@ class Cost(models.Model):
     money = models.IntegerField(
         '金額', validators=[MinValueValidator(0), MaxValueValidator(100000000)])
     description = models.TextField('詳細な説明', blank=True)
-    date = models.DateField('日付')
+    date = models.DateField('日付', default=timezone.now)
     created_at = models.DateTimeField('作成日', default=timezone.now)
 
     def __str__(self):

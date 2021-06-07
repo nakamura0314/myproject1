@@ -15,9 +15,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Cost',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('summary', models.CharField(max_length=30, verbose_name='カテゴリ')),
-                ('money', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100000000)], verbose_name='金額')),
+                ('money', models.IntegerField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(100000000)], verbose_name='金額')),
                 ('description', models.TextField(blank=True, verbose_name='詳細な説明')),
                 ('date', models.DateField(verbose_name='日付')),
             ],

@@ -22,9 +22,8 @@ class BS4CostForm(forms.ModelForm):
             }),
         }
 
-
-def clean_money(self):
-    money = self.cleaned_data['money']
-    if 0 > money:
-        raise forms.ValidationError('それやと増えとるがな')
-    return money
+    def clean_money(self):
+        dt_money = self.cleaned_data.get('money')
+        if 0 > dt_money:
+            raise forms.ValidationError('それやと増えとるがな')
+        return self.cleaned_data.get('money')

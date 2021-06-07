@@ -74,6 +74,40 @@ class MonthCalendarMixin(BaseCalendarMixin):
         return calendar_data
 
 
+class WeekCalendarMixin(BaseCalendarMixin):
+    def get_week_days(self):
+        """その週の全てを返す"""
+        month = self.kwargs.get('month')
+        year = self.kwargs.get('year')
+        day = self.kwargs.get('day')
+        if month and year and day:
+            date = datetime.date(
+                year=int(year), month=int(month), day=int(day))
+        else:
+            date = datetime.date.today()
+
+        for week in self._calendar.monthdatescalendar(date.year, date.month):
+            if date in week:  # 週ごとに取り出せれ、中身は全てdatetime.date型、該当の日が含まれていれば、それが今回表示すべき週
+                return week
+
+    def get_week_calendar(self):
+        """週間カレンダー情報の入った辞書を返す"""
+        self.setup_calendar()
+        days = self.get_week_days()
+        first = days[6]
+        last = days[5]
+        calendar_data = {
+            'now': datetime.date.today(),
+            'week_days': days,
+            'week_previous': first - datetime.timedelta(days=7),
+            'week_next': first + datetime.timedelta(days=7),
+            'week_names': self.get_week_names(),
+            'week_first': first,
+            'week_last': last,
+        }
+        return calendar_data
+
+
 class MonthWithScheduleMixin(MonthCalendarMixin):
     "スケジュール付きの、月間カレンダーを提供するMixin"
 
@@ -105,5 +139,35 @@ class MonthWithScheduleMixin(MonthCalendarMixin):
             month_first,
             month_last,
             month_days
+        )
+        return calendar_context
+
+
+class WeekWithScheduleMixin(WeekCalendarMixin):
+    """スケジュール付きの、週間カレンダーを提供するMixin"""
+
+    def get_week_schedules(self, start, end, days):
+        """それぞれのスケジュールを返す"""
+        lookup = {
+            # 例えば、'date__range:(1日、31日)'を動的に作る
+            '{}__range'.format(self.date_field): (start, end)
+        }
+        # 例えば、Schedule.objects.filter(date__range=(1日,31日))になる
+        # filterとは絞り込みを行う
+        queryset = self.model.objects.filter(**lookup)
+
+        # {1日のdatetime:1日のスケジュール全て,2日のdatetime:2日の全てのスケジュール...}のような辞書を作る
+        day_schedules = {day: [] for day in days}
+        for schedule in queryset:
+            schedule_date = getattr(schedule, self.date_field)
+            day_schedules[schedule_date].append(schedule)
+        return day_schedules
+
+    def get_week_calendar(self):
+        calendar_context = super().get_week_calendar()
+        calendar_context['week_day_schedules'] = self.get_week_schedules(
+            calendar_context['week_first'],
+            calendar_context['week_last'],
+            calendar_context['week_days']
         )
         return calendar_context

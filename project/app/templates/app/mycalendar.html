@@ -1,10 +1,9 @@
 {% extends 'app/base.html' %}
 {% block content %}
 <div class="row">
-    <div class="col-md-7">
-        {% include 'app/month_with_schedule_2.html' %}
-    </div>
-    <div class="col-md-5">
+    <div class="col-md-3">
+        {% include 'app/month2.html' %}
+        <hr>
         <!--
             action属性はどこにデータを送信するのかを定義する
             値は相対、絶対URL出なければならない
@@ -32,5 +31,9 @@
             <button type="submit" class="btn btn-primary btn-block">送信</button>
         </form>
     </div>
+    <div class="col-md-9">
+        {% include 'app/week.html' %}
+    </div>
+
 </div>
 {% endblock %}

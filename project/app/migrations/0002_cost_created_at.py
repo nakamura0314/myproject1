@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cost',
             name='created_at',
-            field=models.DateTimeField(default=django.utils.timezone.now, verbose_name='作成日'),
+            field=models.DateTimeField(
+                default=django.utils.timezone.now, verbose_name='作成日'),
         ),
     ]
